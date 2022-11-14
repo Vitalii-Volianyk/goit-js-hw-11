@@ -6,7 +6,7 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 const searchForm = document.querySelector(".search-form");
 const searchInput = document.querySelector("[name=searchQuery]");
 const gallery = document.querySelector(".gallery")
-const lightbox = new SimpleLightbox('.gallery a', { /* options */ });
+const lightbox = new SimpleLightbox('.gallery a', { captionsData: "alt", captionDelay: 250 });
 
 let lastSearch = "";
 
