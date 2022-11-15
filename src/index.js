@@ -39,7 +39,7 @@ async function getImages(search, page = 1) {
 function getCards(cards) {
 	return cards.map(card => {
 		return `<div class="photo-card">
-					<a href="${card.largeImageURL}"><img src="${card.webformatURL}" alt="${card.tags}" loading="lazy" /></a>
+					<a class="card-link" href="${card.largeImageURL}"><img class="card-image" src="${card.webformatURL}" alt="${card.tags}" loading="lazy" /></a>
 					<div class="info">
 						<p class="info-item">
 							<b>Likes</b>
