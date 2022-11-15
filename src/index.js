@@ -35,6 +35,8 @@ async function getImages(search, page = 1) {
 			} else {
 				if (currentPage == 1) {
 					Notify.success(`Hooray! We found ${response.totalHits} images.`);
+				} else {
+					Notify.success(`Hooray! We loaded more images.`);
 				}
 				gallery.insertAdjacentHTML("beforeend", getCards(response.hits));
 				lightbox.refresh();
