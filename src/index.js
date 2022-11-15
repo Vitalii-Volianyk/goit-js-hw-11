@@ -2,13 +2,18 @@ import Axios from "axios";
 import SimpleLightbox from "simplelightbox";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import "simplelightbox/dist/simple-lightbox.min.css";
+import { throttle } from 'throttle-debounce';
 
 const searchForm = document.querySelector(".search-form");
 const searchInput = document.querySelector("[name=searchQuery]");
 const gallery = document.querySelector(".gallery")
 const lightbox = new SimpleLightbox('.gallery a', { captionsData: "alt", captionDelay: 250 });
-
+const cardHeight = 320;
 let lastSearch = "";
+let lastResultCount = 0;
+let currentPage = 1;
+let pageHeight = document.body.getBoundingClientRect().height;
+let viewHeight = visualViewport.height;
 
 async function getImages(search, page = 1) {
 	Axios.get('https://pixabay.com/api/', {
@@ -24,16 +29,20 @@ async function getImages(search, page = 1) {
 	})
 		.then(response => response.data)
 		.then(response => {
+			lastResultCount = response.totalHits;
 			if (response.hits.length == 0) {
 				Notify.warning('Sorry, there are no images matching your search query. Please try again.');
 			} else {
-				Notify.success(`Hooray! We found ${response.totalHits} images.`);
+				if (currentPage == 1) {
+					Notify.success(`Hooray! We found ${response.totalHits} images.`);
+				}
 				gallery.insertAdjacentHTML("beforeend", getCards(response.hits));
 				lightbox.refresh();
+				pageHeight = document.body.getBoundingClientRect().height;
 			}
 
 		})
-		.catch(error => console.log(error))
+		.catch(error => Notify.warning('Sorry, there are no images matching your search query. Please try again.'))
 }
 
 function getCards(cards) {
@@ -65,8 +74,22 @@ function getCards(cards) {
 searchForm.addEventListener("submit", event => {
 	event.preventDefault();
 	gallery.innerHTML = "";
+	currentPage = 1;
 	lastSearch = searchInput.value.trim();
 	if (lastSearch) {
 		getImages(lastSearch);
 	}
-})
+});
+
+document.addEventListener('scroll', throttle(
+	500, (e) => {
+		if ((window.scrollY + viewHeight + cardHeight * 2) >= pageHeight) {
+			if ((currentPage * 40) < lastResultCount) {
+				currentPage += 1;
+				getImages(lastSearch, currentPage);
+			}
+		}
+	}));
+addEventListener("resize", (event) => {
+	viewHeight = visualViewport.height;
+});
