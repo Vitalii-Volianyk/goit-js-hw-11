@@ -6,7 +6,7 @@ import { throttle } from 'throttle-debounce';
 
 const searchForm = document.querySelector(".search-form");
 const searchInput = document.querySelector("[name=searchQuery]");
-const gallery = document.querySelector(".gallery")
+const gallery = document.querySelector(".gallery").lastElementChild
 const lightbox = new SimpleLightbox('.gallery a', { captionsData: "alt", captionDelay: 250 });
 const cardHeight = 320;
 let lastSearch = "";
@@ -14,7 +14,6 @@ let lastResultCount = 0;
 let currentPage = 1;
 let pageHeight = document.body.getBoundingClientRect().height;
 let viewHeight = visualViewport.height;
-
 async function getImages(search, page = 1) {
 	Axios.get('https://pixabay.com/api/', {
 		params: {
